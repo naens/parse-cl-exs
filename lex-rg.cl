@@ -1,12 +1,12 @@
-;;;; Creating Regular Grammar from Tree Regex 
+;;;; Creating Regular Grammar from Tree Regex
 
 (defun comb (&rest ns)
-  (if ns
-      (read-from-string (format nil "~A~A" (first ns) (eval `(comb ,@(rest ns)))))
-      ""))
+  (if (null ns)
+      ""
+      (read-from-string (format nil "~A~A" (first ns) (apply #'comb (rest ns))))))
 
 (defun make-rule (term rhs)
-  `(,term --> ,@rhs))
+  `(,term ,@rhs))
 
 ;; returns list of rules
 (defun make-rules (lhs &rest rhs)
@@ -31,14 +31,12 @@
     (case type
       (EXPR (re2rg expr curr pre c r a))
       (BR (nconc (make-br-rules curr expr r) a))
-      ;; TODO: OR (children of type EXPR)
-      ;; (re2rg <OR-EXPR=expr> curr pre c r <pipe accumulator>)
       (OR (labels ((do-ors (or-exprs acc oc)
 ;;		     (format t "~&DO-ORS: [ORS=~S ACC=~S]" or-exprs acc)
 		     (if (null or-exprs)
 			 acc
 			 (do-ors (rest or-exprs)
-			   (re2rg (rest (first or-exprs)) curr (comb pre oc #\-) c r acc)
+			   (re2rg (rest (first or-exprs)) curr (comb pre oc) c r acc)
 			   (1+ oc)))))
 	    (do-ors expr a 1)))
       (otherwise
@@ -55,40 +53,40 @@
 (defun re2rg (re curr pre c &optional r a)
 ;;  (format t "~&re2rg: e=~S curr=~S pre=~S r=~A" (first re) curr pre r)
   (let ((e (first re))
-	(n (comb pre c)))
+	(n (comb pre #\- c)))
     (cond ((null re) (nconc (make-rules curr r) a))
 	  ((characterp e)
 	   (re2rg (rest re) n pre (1+ c) r (nconc (make-rules curr e n) a)))
 	  ((and (equal (first e) 'Q) (equal (third e) #\?))
-	   (let ((sub (re2rgsub (second e) curr (comb curr #\_) 1 n a)))
+	   (let ((sub (re2rgsub (second e) curr (comb n "_") 1 n a)))
 ;;	     (format t "~&SUB[?]=~S" sub)
 	     (re2rg (rest re) n pre (1+ c) r (nconc (make-rules curr n) sub))))
 	  ((and (equal (first e) 'Q) (equal (third e) #\*))
-	   (let* ((n2 (comb pre (1+ c)))
+	   (let* ((n2 (comb pre "-" (1+ c)))
 		  (rules (nconc (make-rules n n2) (make-rules curr n)))
-		  (sub (re2rgsub (second e) n (comb n #\_) 1 n (nconc rules a))))
+		  (sub (re2rgsub (second e) n (comb n "_") 1 n (nconc rules a))))
 ;;	     (format t "~&SUB[*]=~S" sub)
 	     (re2rg (rest re) n2 pre (2+ c) r sub)))
 	  ((and (equal (first e) 'Q) (equal (third e) #\+))
-	   (let* ((n2 (comb pre (1+ c)))
+	   (let* ((n2 (comb pre "-" (1+ c)))
 		  (rule (make-rules n n2))		    
-		  (sub (re2rgsub (second e) (list n curr) (comb curr #\_) 1 n (nconc rule a))))
+		  (sub (re2rgsub (second e) (list n curr) (comb n "_") 1 n (nconc rule a))))
 ;;	     (format t "~&SUB[+]=~S" sub)
 	     (re2rg (rest re) n2 pre (2+ c) r sub)))
 	  ((and (equal (first e) 'Q) (equal (third e) 1))
-	   (let ((sub (re2rgsub (second e) curr (comb curr #\_) 1 n a)))
+	   (let ((sub (re2rgsub (second e) curr (comb n "_") 1 n a)))
 ;;	     (format t "~&SUB[1]=~S" sub)
 	     (re2rg (rest re) n pre (1+ c) r sub)))
 	  ((and (equal (first e) 'Q) (numberp (third e)))
 	   (labels ((do-repeat (last from to acc)
 		      (if (< from to)
 			  acc
-			  (let ((nn (if (= from to) curr (comb pre c #\_ from "\\-0"))))
+			  (let ((nn (if (= from to) curr (comb pre "[" c "]_" from "\\-0"))))
 			    (do-repeat
 			      nn
 			      (1- from)
 			      to
-			      (re2rgsub (second e) nn (comb pre c #\_ from #\-) 1 last acc))))))
+			      (re2rgsub (second e) nn (comb pre "[" c "]_" from) 1 last acc))))))
 	     (format t "~&SUB[n=~S]=~S " (third e) (second e))
 	     (re2rg (rest re) n pre (1+ c) r (do-repeat n (third e) 1 a))))
 ;;; TODO: ADD {n} Q=n support	  
@@ -97,15 +95,18 @@
 	       (re2rg (rest re) n pre (1+ c) r (nconc (make-rules curr 'N/A n) a)))))))
 
 ;; makes rg from regex string starting with terminal name
+(defun expr2rg (expr name)
+  (re2rg (cdr expr) 'START name 1 (list 'ACCEPT name)))
+
 (defun str2rg (str name)
   (let ((re (parse-regex str)))
-    (nreverse (re2rg (cdr re) name name 1))))
+    (nreverse (expr2rg re name))))
 
 (defun prs (rules)
   (loop
      for r in rules
-     do (cond ((= (length r) 4) (format t "~&~4A -> ~A ~A" (first r) (third r) (fourth r)))
-	      ((= (length r) 3) (format t "~&~4A -> ~A" (first r) (third r)))
+     do (cond ((= (length r) 3) (format t "~&~12A ->     ~A ~A" (first r) (second r) (third r)))
+	      ((= (length r) 2) (format t "~&~12A ->     ~A" (first r) (second r)))
 	      (t (print r))))
   (format t "~%"))
 
@@ -124,6 +125,7 @@
 (print (parse-regex "(a|b)|(c|d)"))
 (print (parse-regex "(#+|#-)?[0-9]+"))
 (print (parse-regex "ab([c-e]+fg)*m"))
+(print (parse-regex "[a-z][a-z0-9]*"))
 
 
 (prs (str2rg "ab(ef)?c" 'S))
@@ -132,6 +134,9 @@
 (prs (str2rg "ab(ef)c" 'W))
 (prs (str2rg "ab(cd(ef)+h)*ij" 'S))
 (prs (str2rg "cd(ef)+h" 'A))
+(prs (str2rg "cd[ef]*h" 'A))
+(prs (str2rg "cd[ef]+h" 'A))
+(prs (str2rg "cd[ef]h" 'A))
 (prs (str2rg "ab[efg]c" 'W))
 (prs (str2rg "ab[efg]*c" 'W))
 (prs (str2rg "ab[ef4-8]*c" 'W))
@@ -141,6 +146,15 @@
 (prs (str2rg "o(ab){2}c" 'N))
 (prs (str2rg "o(ab){1}c" 'N))
 (prs (str2rg "ra{5}d" 'P))
+(prs (str2rg "[a-d][a-d0-2]*" 'P))
+(prs (str2rg "(a|b)?[0-2]+" 'P))
+(print (parse-regex "(a|b)?[0-2]+"))
 
 
-
+(defun gram2rg (gram &optional acc)
+  (if (null gram)
+      (nreverse acc)
+      (let ((name (caar gram))
+	    (expr (cadar gram)))
+;;	(format t "~&~A: ~S" name expr)
+	(gram2rg (cdr gram) (nconc (expr2rg expr name) acc)))))

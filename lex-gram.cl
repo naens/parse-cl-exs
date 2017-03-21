@@ -135,13 +135,4 @@
        do (push (list n (parse-regex e)) rgram))
     `(defparameter ,name ',(nreverse rgram))))
 
-(defgram tada ()
-  number "(#+|#-)?[0-9]+"
-  lower "#<"
-  greater "#>"
-  punct "#,|#:|#!|##"
-  reserved "if|begin|end|var|else"
-  ident "[a-z][a-z0-9]*"
- )
 
-(print tada)
