@@ -177,7 +177,7 @@
 ;;(print ex1)
 
 (defparameter ex1-rg (gram2rg ex1))
-;;(prs ex1-rg)
+(prs ex1-rg)
 
 (defparameter ex1-rg-map (get-rg-map ex1-rg))
 (maphash #'print-hash-entry ex1-rg-map)
