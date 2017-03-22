@@ -1,5 +1,17 @@
 ;;; DEFINITION AND READING OF THE LEX GRAMMAR
 
+;;forward decalrations
+(defun read-next (string)
+  (declare (ignore string)))
+
+(defun read-quantifier (string &optional acc digit)
+  (declare (ignore string))
+  (declare (ignore acc))
+  (declare (ignore digit)))
+	   
+
+
+
 (defun nrprepend (from to)
   (cond ((null from) to)
 	(t (nrprepend (rest from) (cons (first from) to)))))
