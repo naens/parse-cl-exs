@@ -1,33 +1,29 @@
 ;;;; Data Types for Parsing ;;;;
 
 
-;;; 1. Types with substrings
+;;; Types with substrings
 
-;; for terminal strings
 (defstruct term-item
   name
   substring)
 
-;; for parsing output: ast
 (defstruct ast-node
   non-term-name
   rule
-  children)				;children: ast-nodes or ast-leaves
+  children)				; children: ast-nodes or term-items
 
-(defstruct ast-leaf
-  term-name
-  substring)
+;;; Data Types for Grammars (lex, ebnf)
 
-;;; 2. Data Types for Grammars
-;;; Grammar types: lex, bnf, ebnf
-;;; lex rules and ebnf rules can have zero-elements expressions
 (defstruct rule
   name
   elements)
 
-;;; quantifier: int, ?, *, +
-;;; lex grammars can have classes or ranges as items.
-;;; when converted to structs, expanded to different rules.
 (defstruct element
-  item				        ;lex: char; bnf and ebnf: terminal or non-terminal
-  quantifier)				;default:1, bnf: only 1 is possible
+  item				        ; lex: char or range; ebnf: terminal or non-terminal
+  quantifier)         ; quantifier: int, ?, *, +
+
+;;; lex elements can have classes or ranges as items.
+;;; when converted to structs, expanded to different rules.
+(defstruct range      ; ranges for lexer (ex: from 0 to 9 for a digit...)
+  chr-from
+  chr-to)
