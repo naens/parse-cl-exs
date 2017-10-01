@@ -12,6 +12,7 @@
   rule
   children)				; children: ast-nodes or term-items
 
+
 ;;; Data Types for Grammars (lex, ebnf)
 
 (defstruct rule
