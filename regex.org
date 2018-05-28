@@ -16,7 +16,7 @@ Here are the operators in order of precedence:
    can be missing.
  * ~*~, ~?~, ~+~: Kleene-closure, optional element, repetition
  * =~=: negation
- * ~&~, ~\~: intersection and difference
+ * ~&~, ~\~: conjunction and difference
  * ~\,\~: string concatenation
  * ~|~: union
 
@@ -32,10 +32,10 @@ defined like rules, but with a ~let~ prefix: ~\'let', <name>, '=',
 * Definition of the grammar of the regular expressions
 
 #+BEGIN_SRC
-regex = <term> ('|', <term>)*
-term = <item> (',', <item>)*
-item = <factor> (('&' | '\'), <factor>)*
-factor = '~', (<range> | <string> | <rule> | '(' <regex ')'), ('*', '?', '+')?
+regex = <disjunct> ('|', <disjunct>)*
+disjunct = <term> (',', <term>)*
+term = <conjunct> (('&' | '\'), <conjunct>)*
+conjunct = '~', (<range> | <string> | <rule> | '(' <regex ')'), ('*', '?', '+')?
 range = '..', <character> | <character>, '..', <character>?
 character = <quote>, <char>, <quote> | <number> | <hex-number>
 string = <quote>, <char>*, <quote>
