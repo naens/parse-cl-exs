@@ -1,0 +1,44 @@
+#+TITLE: Regular Expressions
+
+* Overview
+
+Regular expressions use a simple non-standard grammar.  It allows to
+use basic unary and binary operators and sub-rules.  These regular
+expressions are made to be used in grammars for scanners.  Each
+expression corresponds to a rule or a subrule.  The difference between
+both is that subrules are do not make an accepting state, so they can
+be used as parts of rules.
+
+* Operators
+
+Here are the operators in order of precedence:
+ * ~..~ : Range between characters.  The first or the last character
+   can be missing.
+ * ~*~, ~?~, ~+~: Kleene-closure, optional element, repetition
+ * =~=: negation
+ * ~&~, ~\~: intersection and difference
+ * ~\,\~: string concatenation
+ * ~|~: union
+
+* Rules and Subrules
+
+Rules correspond to tokens, terminals and accepting states.  They are
+defined ~<name>, '=', <regex>~.
+
+Subrules are subexpressions that can be used by rules.  They are
+defined like rules, but with a ~let~ prefix: ~\'let', <name>, '=',
+<regex>~.
+
+* Definition of the grammar of the regular expressions
+
+#+BEGIN_SRC
+regex = <term> ('|', <term>)*
+term = <item> (',', <item>)*
+item = <factor> (('&' | '\'), <factor>)*
+factor = '~', (<range> | <string> | <rule> | '(' <regex ')'), ('*', '?', '+')?
+range = '..', <character> | <character>, '..', <character>?
+character = <quote>, <char>, <quote> | <number> | <hex-number>
+string = <quote>, <char>*, <quote>
+#+END_SRC
+
+
