@@ -30,6 +30,13 @@ p {
     font: 11pt Courier Prime, Courier, monospace;
 }
 
+body.NDContentPage {
+    background-color: #FFFFFF;
+    padding: .5em 1em;
+    margin: 0;
+    width: 768px;
+}
+
 #HTitle {
     font: 22pt FrizQuadrataRegular, Georgia,serif;
 }
@@ -43,10 +50,12 @@ p {
 }
 
 .CTitle {
+    margin: 1.5em 0 1em 0;
     font: bold 12pt Courier Prime, Courier, monospace;
 }
 
 .TGroup .CTitle {
+    margin: 2em 0 .5em 0;
     text-transform: none;
     border-bottom: none;
     text-decoration: underline;
@@ -57,8 +66,26 @@ p {
     font: bold 12pt Courier Prime, Courier, monospace;
 }
 
+.CTopic pre {
+    font: 11pt Courier Prime, Courier, monospace;
+    margin: 1em 4em 1em 4em;
+    border-style: none;
+    border-width: 0px;
+    padding: 1ex 1ex 0.6ex 2ex;
+    background-color: #E0E0E0;
+}
+
+.CTopic {
+    margin-bottom: 3em;
+    font: 11pt Courier Prime, Courier, monospace;
+}
+
+.CTopic.TGroup.Lcl {
+    margin-bottom: 0em;
+}
+
 td.CDLEntry {
-    font: bold 12pt Courier Prime, Courier, monospace;
+    font: bold 11pt Courier Prime, Courier, monospace;
 }
 
 .MEntry {
@@ -67,7 +94,7 @@ td.CDLEntry {
 }
 
 .SuEntry {
-    font: 12pt Courier Prime, Courier, monospace;
+    font: 11pt Courier Prime, Courier, monospace;
     color: #000;
 }
 
