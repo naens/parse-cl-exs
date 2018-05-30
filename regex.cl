@@ -2,11 +2,13 @@
 ;;;;    Parsing of Regular Expressions and create AST from them
 
 ;;; TODO: use packages
+;;; TODO: separator between rules: newline or semicolon?
 ;;;
 ;;; Function: regex@parse
 ;;;
-;;;     Parses a regular expression:
-;;;     : <disjunct> ('|', <disjunct>)*
+;;;     Parses a regular expression.
+;;;
+;;;     : regex = <disjunct> ('|', <disjunct>)*
 ;;;
 ;;;     Returns its AST.  The input string is a Common Lisp string, but
 ;;;     internally it transforms it in a list of characters and then
@@ -18,7 +20,7 @@
 ;;;
 ;;; Returns:
 ;;;
-;;;     The AST of the regular expression
+;;;     The AST of the regular expression.
 ;;;
 (defun regex@parse (string)
   ;; parse-char-list works with a list representation of the string
@@ -27,24 +29,33 @@
     (parse-regex (coerce s 'list))))
 
 
-;;; Function: regex@skip-char
+;;; Function: regex@skip
 ;;;
-;;;     Determines whether the character should be read outside strings.
+;;;     Skips separator characters between tokens and syntax elements,
+;;;     such as spaces and tabs.  The function should not be called
+;;;     when reading strings or escaped characters.
+;;;
+;;;     In a future version might also skip comments if a syntax for
+;;;     comments is defined.
 ;;;
 ;;; Parameters:
 ;;;
-;;;     character - input character to test
+;;;     char-list - regular expression (or tail of it) in list form
 ;;;
 ;;; Returns:
 ;;;
-;;;     t if the character is skippable, nil otherwise
+;;;     The regular expression following the characters to be skipped.
 ;;;
-(defun regex@skip-char (character)
-  (member character (list #\Space #\Tab  #\Linefeed  #\Return  #\Newline)))
+(defun regex@skip (char-list)
+  (cond ((null char-list) nil)
+        ((member (car char-list)
+                 (list #\Space #\Tab  #\Linefeed  #\Return  #\Newline))
+         (regexp@skip (cdr char-list)))
+        (t char-list)))
 
 ;;; Function: regex@parse-char
 ;;;
-;;;     Parses a single character
+;;;     Parses a single character.
 ;;;
 ;;; Parameters:
 ;;;
@@ -53,22 +64,21 @@
 ;;;
 ;;; Returns:
 ;;;
-;;;     ok - boolean, t if matches, nil otherwise
+;;;     ok - boolean: *t* if matches, *nil* otherwise
 ;;;     tail - the rest of the char-list after the character
 ;;;
 (defun regex@parse-char (char-list character)
   (cond ((null char-list)
          (values nil nil))
-        ((regex@skip-char (car char-list))
-         (regex@parse-char (cdr char-list) character))
         ((equal (car char-list))
          (values t (cdr char-list)))
         (t (values nil nil))))
 
 ;;; Function: regex@parse-disjunct
 ;;;
-;;;     Parses a disjunct:
-;;;     : <term> (',', <term>)*
+;;;     Parses a disjunct.
+;;;
+;;;     : disjunct = <term> (',', <term>)*
 ;;;
 ;;; Parameters:
 ;;;
@@ -76,19 +86,21 @@
 ;;;
 ;;; Returns:
 ;;;
-;;;     A regex AST node representing the parsed disjunct.
+;;;     disjunct - AST node representing the parsed disjunct
+;;;     tail - The rest of the regex
 ;;;
 (defun regex@parse-disjunct (char-list)
   ;; parses a character list and returns a list of terms in reversed order
   (labels ((parse-terms (char-list acc)
-             (let ((term (parse-term)))
-               (if (null term)          ; if we have a term
-                   nil
-                   (multiple-value-bind (ok tail)
-                       (regex@parse-char char-list #\,)
-                     (if ok             ; if we have a comma
-                         (parse-terms tail (cons term acc))
-                         (list term)))))))
+             (multiple-value-bind (term term-tail)
+                 (regex@parse-term char-list)
+               (if term                 ; if we have a term
+                   (multiple-value-bind (comma-ok comma-tail)
+                       (regex@parse-char (regex@skip term-tail) #\,)
+                     (if comma-ok        ; if we have a comma
+                         (parse-terms comma-tail (cons term acc))
+                         (cons term acc)))
+                   nil))))
     ;; get list of terms
     (let ((terms-reversed (parse-terms char-list nil)))
       ;; create a disjunct AST node
