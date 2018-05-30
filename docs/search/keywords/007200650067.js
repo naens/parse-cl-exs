@@ -1,1 +1,1 @@
-NDSearch.OnPrefixDataLoaded("reg",["Class","Function"],[["regex",,[[,,,,0,"File:regex.cl:regex","clClass:regex"]]],["regex@parse",,[["regex",,,,1,"File:regex.cl:regex.regex@parse","clClass:regex:regex@parse"]]]]);
+NDSearch.OnPrefixDataLoaded("reg",["Package","Function"],[["regex",,[[,,,,0,"File:regex.cl:regex"]]],["regex@parse",,[[,,,,1,"File:regex.cl:regex@parse"]]]]);

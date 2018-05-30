@@ -1,1 +1,0 @@
-NDFramePage.OnPageTitleLoaded("clClass:regex","regex");NDSummary.OnSummaryLoaded("clClass:regex",[["Common Lisp","cl"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[5,0,0,"regex"],[6,0,2,"Functions","Functions"],[7,0,1,"regex@parse","regex@parse"]]);

@@ -20,6 +20,7 @@
 
 # Comment Types
 # ------------------------------------------------------------------------
+# The syntax reference is after the definitions.
 
 Comment Type: Module
 
@@ -29,6 +30,17 @@ Comment Type: Module
 
    Keywords:
       module, modules
+
+
+Comment Type: Package
+
+   Plural Display Name: Packages
+
+   Scope: Always Global
+   Flags: Code
+
+   Keywords:
+      package, packages
 
 
 # Each Natural Docs comment has a corresponding type which determine its

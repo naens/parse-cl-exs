@@ -1,0 +1,101 @@
+@font-face {
+	font-family: 'FrizQuadrataRegular';
+	src: url('./FrizQuadrataRegular.eot');
+	src: local('FrizQuadrataRegular'),
+	     url('./FrizQuadrataRegular.woff') format('woff'),
+	     url('./FrizQuadrataRegular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Courier Prime';
+    src: url('CourierPrime.eot');
+    src: url('CourierPrime.eot?#iefix') format('embedded-opentype'),
+        url('CourierPrime.woff2') format('woff2'),
+        url('CourierPrime.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Courier Prime';
+    src: url('CourierPrime-Bold.eot');
+    src: url('CourierPrime-Bold.eot?#iefix') format('embedded-opentype'),
+        url('CourierPrime-Bold.woff2') format('woff2'),
+        url('CourierPrime-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+p {
+    font: 11pt Courier Prime, Courier, monospace;
+}
+
+#HTitle {
+    font: 22pt FrizQuadrataRegular, Georgia,serif;
+}
+
+.HTitle {
+    font: 26pt FrizQuadrataRegular, Georgia,serif;
+}
+
+.CTopic.first .CTitle {
+    font: 20pt FrizQuadrataRegular, Georgia,serif;
+}
+
+.CTitle {
+    font: bold 12pt Courier Prime, Courier, monospace;
+}
+
+.TGroup .CTitle {
+    text-transform: none;
+    border-bottom: none;
+    text-decoration: underline;
+    font: bold 12pt Courier Prime, Courier, monospace;
+}
+
+.CHeading {
+    font: bold 12pt Courier Prime, Courier, monospace;
+}
+
+td.CDLEntry {
+    font: bold 12pt Courier Prime, Courier, monospace;
+}
+
+.MEntry {
+    font: bold 12pt Courier Prime, Courier, monospace;
+    color: #000;
+}
+
+.SuEntry {
+    font: 12pt Courier Prime, Courier, monospace;
+    color: #000;
+}
+
+.SuEntry.TGroup {
+    font: bold 12pt Courier Prime, Courier, monospace;
+    color: #000;
+}
+
+.TFunction .SuEntryIcon, .TOperator .SuEntryIcon {
+    background-color: #000;
+    border: none;
+    position: absolute;
+    left: 1.0em;
+    width: 0.4em;
+    height: 0.4em;
+    margin-top: 0.2em;
+}
+
+.HFooter {
+    margin: 0 auto;
+    margin-top: 2em;
+    border-top: 1px solid #A0A0A0;
+    padding-top: 2em;
+    font: 8pt Courier Prime, Courier, monospace;
+}
+
+.HFooter a:link, .HFooter a:visited, .HFooter a:hover, .HFooter a:active {
+    color: #000;
+}
+
+
