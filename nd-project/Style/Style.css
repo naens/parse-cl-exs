@@ -30,6 +30,13 @@ p {
     font: 11pt Courier Prime, Courier, monospace;
 }
 
+.CTopic p {
+    margin: 0 0 .5em 0;
+    padding-left: 2em;
+    text-indent: 0;
+    text-align: justify;
+}
+
 body.NDContentPage {
     background-color: #FFFFFF;
     padding: .5em 1em;
@@ -72,7 +79,7 @@ body.NDContentPage {
     border-style: none;
     border-width: 0px;
     padding: 1ex 1ex 0.6ex 2ex;
-    background-color: #E0E0E0;
+/*    background-color: #E0E0E0;*/
 }
 
 .CTopic {
@@ -89,7 +96,7 @@ td.CDLEntry {
 }
 
 .MEntry {
-    font: bold 12pt Courier Prime, Courier, monospace;
+    font: bold 11pt Courier Prime, Courier, monospace;
     color: #000;
 }
 
