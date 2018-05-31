@@ -18,11 +18,11 @@
 # Languages
 # ------------------------------------------------------------------------
 
-Language: Common Lisp
+Language: Racket
 
-   Extension: cl
+   Extension: rkt
 
-   Simple Identifier: cl
+   Simple Identifier: racket
 
    Line Comment: ; ;; ;;; ;;;;
 
@@ -102,3 +102,4 @@ Language: Common Lisp
 #    When defined, Natural Docs will attempt to get a prototype from the code
 #    immediately following the comment type.  It stops when it reaches one of
 #    these symbols.  Use \n for line breaks.
+

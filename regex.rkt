@@ -1,10 +1,10 @@
 ;;;; Package: regex
-;;;;    Parsing of Regular Expressions and create AST from them
+;;;;    Parsing of Regular Expressions and create AST from them.
 
 ;;; TODO: use packages
 ;;; TODO: separator between rules: newline or semicolon?
 ;;;
-;;; Function: regex@parse
+;;; Function: parse
 ;;;
 ;;;     Parses a regular expression.
 ;;;
@@ -22,14 +22,14 @@
 ;;;
 ;;;     The AST of the regular expression.
 ;;;
-(defun regex@parse (string)
+(define (parse string)
   ;; parse-char-list works with a list representation of the string
-  (labels ((parse-regex (char-list)
-             'TODO))
-    (parse-regex (coerce s 'list))))
+  (define (parse-regex char-list)
+    'TODO)
+  (parse-regex (string->list s)))
 
 
-;;; Function: regex@skip
+;;; Function: skip
 ;;;
 ;;;     Skips separator characters between tokens and syntax elements,
 ;;;     such as spaces and tabs.  The function should not be called
@@ -46,14 +46,14 @@
 ;;;
 ;;;     The regular expression following the characters to be skipped.
 ;;;
-(defun regex@skip (char-list)
-  (cond ((null char-list) nil)
+(define (skip char-list)
+  (cond ((null? char-list) #f)
         ((member (car char-list)
-                 (list #\Space #\Tab  #\Linefeed  #\Return  #\Newline))
-         (regexp@skip (cdr char-list)))
-        (t char-list)))
+                 (list #\space #\tab))  ; add other characters if needed
+         (skip (cdr char-list)))
+        (#t char-list)))
 
-;;; Function: regex@parse-char
+;;; Function: parse-char
 ;;;
 ;;;     Parses a single character.
 ;;;
@@ -64,17 +64,17 @@
 ;;;
 ;;; Returns:
 ;;;
-;;;     ok - boolean: *t* if matches, *nil* otherwise
+;;;     ok - boolean: *#t* if matches, *#f* otherwise
 ;;;     tail - the rest of the char-list after the character
 ;;;
-(defun regex@parse-char (char-list character)
-  (cond ((null char-list)
-         (values nil nil))
+(define (parse-char char-list character)
+  (cond ((null? char-list)
+         (values #f #f))
         ((equal (car char-list))
-         (values t (cdr char-list)))
-        (t (values nil nil))))
+         (values #t (cdr char-list)))
+        (#t (values #f #f))))
 
-;;; Function: regex@parse-disjunct
+;;; Function: parse-disjunct
 ;;;
 ;;;     Parses a disjunct.
 ;;;
@@ -89,24 +89,18 @@
 ;;;     disjunct - AST node representing the parsed disjunct
 ;;;     tail - The rest of the regex
 ;;;
-(defun regex@parse-disjunct (char-list)
+(define (parse-disjunct char-list)
   ;; parses a character list and returns a list of terms in reversed order
-  (labels ((parse-terms (char-list acc)
-             (multiple-value-bind (term term-tail)
-                 (regex@parse-term char-list)
-               (if term                 ; if we have a term
-                   (multiple-value-bind (comma-ok comma-tail)
-                       (regex@parse-char (regex@skip term-tail) #\,)
-                     (if comma-ok        ; if we have a comma
-                         (parse-terms comma-tail (cons term acc))
-                         (cons term acc)))
-                   nil))))
+  (define (parse-terms char-list acc)
+    (let-values (((term term-tail) (parse-term char-list)))
+      (if term                 ; if we have a term
+          (let-values (((comma-ok comma-tail)
+                        (parse-char (skip term-tail) #\,)))
+            (if comma-ok        ; if we have a comma
+                (parse-terms comma-tail (cons term acc))
+                (cons term acc)))
+          #f)))
     ;; get list of terms
-    (let ((terms-reversed (parse-terms char-list nil)))
-      ;; create a disjunct AST node
-      'TODO)))
-
-           
-
-             
-  
+  (let ((terms-reversed (parse-terms char-list nil)))
+    ;; create a disjunct AST node
+    'TODO))
