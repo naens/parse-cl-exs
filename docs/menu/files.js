@@ -1,1 +1,1 @@
-NDMenu.OnSectionLoaded("files.js",[[1,"regex.cl"]]);
+NDMenu.OnSectionLoaded("files.js",[[1,"regex.rkt"]]);

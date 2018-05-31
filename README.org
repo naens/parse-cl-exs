@@ -4,5 +4,5 @@
 ~TODO~
 
 * Documentation
-[[https://naens.github.io/parse-cl-exs][https://naens.github.io/parse-cl-exs]]
+[[https://naens.github.io/parse-exs][https://naens.github.io/parse-exs]]
 

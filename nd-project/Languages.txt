@@ -102,4 +102,3 @@ Language: Racket
 #    When defined, Natural Docs will attempt to get a prototype from the code
 #    immediately following the comment type.  It stops when it reaches one of
 #    these symbols.  Use \n for line breaks.
-

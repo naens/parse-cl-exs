@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("par",["Function"],[["parse",,[[,,,,0,"File:regex.rkt:parse"]]],["parse-char",,[[,,,,0,"File:regex.rkt:parse-char"]]],["parse-disjunct",,[[,,,,0,"File:regex.rkt:parse-disjunct"]]]]);
