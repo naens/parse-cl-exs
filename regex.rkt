@@ -68,7 +68,7 @@
 (define (parse-char char-list character)
   (cond ((null? char-list)
          (values #f #f))
-        ((equal (car char-list))
+        ((equal? (car char-list) character)
          (values #t (cdr char-list)))
         (#t (values #f #f))))
 
@@ -168,11 +168,19 @@ n;;;     : range = '..', <character> | <character>, '..', <character>?
   ;; reads until quote or end-of-list
   (define (parse-str-rec chlst acc)
     (cond ((null? chlst) (values acc chlst))
-          ((equal? (car chlst) #\') acc (cdr chlst))
+          ((equal? (car chlst) #\') (values acc (cdr chlst)))
           (#t
-           (let ((char-node (<make-char-node> (car chlst))))
-             (parse-str-rec (cdr chlst) (cons char-node acc)))))
-  (let-values (((char-ok tail) (parse-char #\')))
+           (let ((char-node (make-ast-node 'character (car chlst) #f)))
+             (parse-str-rec (cdr chlst) (cons char-node acc))))))
+  (let-values (((char-ok tail) (parse-char char-list #\')))
     (if char-ok
-        (parse-str-rec tail (list))
+        (let-values (((nodes tail) (parse-str-rec tail (list))))
+          (values (make-ast-node 'string  '() (reverse nodes)) tail))
         (values #f #f)))))
+
+;; test parse-string
+(let-values (((ast tail) (parse-string (string->list "'abc'; "))))
+  (printf "~%=> ast=~s,  tail=~s" ast tail))
+
+(let-values (((ast tail) (parse-string (string->list "''; "))))
+  (printf "~%=> ast=~s,  tail=~s" ast tail))
