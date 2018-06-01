@@ -1,1 +1,1 @@
-NDMenu.OnSectionLoaded("files.js",[[1,"regex.rkt"]]);
+NDMenu.OnSectionLoaded("files.js",[[1,"ast-node.rkt"],[1,"regex.rkt"]]);

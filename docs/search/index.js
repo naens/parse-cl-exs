@@ -1,1 +1,1 @@
-NDSearch.OnPrefixIndexLoaded(["par","reg","ski"]);
+NDSearch.OnPrefixIndexLoaded(["ast","par","reg","ski"]);
