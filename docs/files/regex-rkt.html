@@ -36,9 +36,34 @@
  <div class="CBody"><p>Parses a single character.</p><div class="CHeading">Parameters</div><table class="CDefinitionList"><tr><td class="CDLEntry">char-list</td><td class="CDLDefinition"><p>list of characters to parse</p></td></tr><tr><td class="CDLEntry">character</td><td class="CDLDefinition"><p>expected character</p></td></tr></table><div class="CHeading">Returns</div><table class="CDefinitionList"><tr><td class="CDLEntry">ok</td><td class="CDLDefinition"><p>boolean: <b>#t</b> if matches, <b>#f</b> otherwise</p></td></tr><tr><td class="CDLEntry">tail</td><td class="CDLDefinition"><p>the rest of the char-list after the character</p></td></tr></table></div>
 </div>
 
-<a name="parse-disjunct"></a><a name="Topic7"></a><div class="CTopic TFunction Lracket last">
+<a name="parse-disjunct"></a><a name="Topic7"></a><div class="CTopic TFunction Lracket">
  <div class="CTitle">parse-disjunct</div>
  <div class="CBody"><p>Parses a disjunct.</p><pre>disjunct = &lt;term&gt; (',', &lt;term&gt;)*</pre><div class="CHeading">Parameters</div><table class="CDefinitionList"><tr><td class="CDLEntry">char-list</td><td class="CDLDefinition"><p>list of characters to parse</p></td></tr></table><div class="CHeading">Returns</div><table class="CDefinitionList"><tr><td class="CDLEntry">disjunct</td><td class="CDLDefinition"><p>AST node representing the parsed disjunct</p></td></tr><tr><td class="CDLEntry">tail</td><td class="CDLDefinition"><p>The rest of the regex</p></td></tr></table></div>
+</div>
+
+<a name="parse-term"></a><a name="Topic8"></a><div class="CTopic TFunction Lracket">
+ <div class="CTitle">parse-term</div>
+ <div class="CBody"><p>Parses a term.</p><pre>term = &lt;conjunct&gt; (('&amp;' | '\'), &lt;conjunct&gt;)*</pre></div>
+</div>
+
+<a name="parse-conjunct"></a><a name="Topic9"></a><div class="CTopic TFunction Lracket">
+ <div class="CTitle">parse-conjunct</div>
+ <div class="CBody"><p>Parses a conjunct</p><pre>conjunct = '~',<br />           (&lt;range&gt; | &lt;string&gt; | &lt;rule&gt; | '(' &lt;regex ')'),<br />           ('*', '?', '+')?</pre></div>
+</div>
+
+<a name="parse-range"></a><a name="Topic10"></a><div class="CTopic TFunction Lracket">
+ <div class="CTitle">parse-range</div>
+ <div class="CBody"><p>Parses a range.</p></div>
+</div>
+
+<a name="parse-charlit"></a><a name="Topic11"></a><div class="CTopic TFunction Lracket">
+ <div class="CTitle">parse-charlit</div>
+ <div class="CBody"><p>Parses a charater literal.</p><pre>character = &lt;quote&gt;, &lt;char&gt;, &lt;quote&gt; | &lt;number&gt; | &lt;hex-number&gt;</pre><div class="CHeading">Parameters</div><table class="CDefinitionList"><tr><td class="CDLEntry">char-list</td><td class="CDLDefinition"><p>list of characters to parse</p></td></tr></table><div class="CHeading">Returns</div><table class="CDefinitionList"><tr><td class="CDLEntry">character-node</td><td class="CDLDefinition"><p>AST node representing the parsed character</p></td></tr><tr><td class="CDLEntry">tail</td><td class="CDLDefinition"><p>The rest of the regex</p></td></tr></table></div>
+</div>
+
+<a name="parse-string"></a><a name="Topic12"></a><div class="CTopic TFunction Lracket last">
+ <div class="CTitle">parse-string</div>
+ <div class="CBody"><p>Parses a string literal.</p><pre>string = &lt;quote&gt;, &lt;char&gt;*, &lt;quote&gt;</pre><div class="CHeading">Parameters</div><table class="CDefinitionList"><tr><td class="CDLEntry">char-list</td><td class="CDLDefinition"><p>list of characters to parse</p></td></tr></table><div class="CHeading">Returns</div><table class="CDefinitionList"><tr><td class="CDLEntry">character list</td><td class="CDLDefinition"><p>list of character AST nodes representing the string.</p></td></tr><tr><td class="CDLEntry">tail</td><td class="CDLDefinition"><p>The rest of the regex</p></td></tr></table></div>
 </div>
 
 </body></html>
