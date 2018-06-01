@@ -1,9 +1,7 @@
 ;;;; Package: regex
 ;;;;    Parsing of Regular Expressions and create AST from them.
 
-;;; TODO: use packages
-;;; TODO: separator between rules: newline or semicolon?
-;;;
+
 ;;; Function: parse
 ;;;
 ;;;     Parses a regular expression.
@@ -74,6 +72,7 @@
          (values #t (cdr char-list)))
         (#t (values #f #f))))
 
+
 ;;; Function: parse-disjunct
 ;;;
 ;;;     Parses a disjunct.
@@ -104,3 +103,76 @@
   (let ((terms-reversed (parse-terms char-list nil)))
     ;; create a disjunct AST node
     'TODO))
+
+;;; Function: parse-term
+;;;
+;;;     Parses a term.
+;;;
+;;;     : term = <conjunct> (('&' | '\'), <conjunct>)*
+;;;
+
+;;; Function: parse-conjunct
+;;;
+;;;     Parses a conjunct
+;;;
+;;;     : conjunct = '~',
+;;;     :            (<range> | <string> | <rule> | '(' <regex ')'),
+;;;     :            ('*', '?', '+')?
+;;;
+
+;;; Function: parse-range
+;;;
+;;;     Parses a range.
+;;;
+n;;;     : range = '..', <character> | <character>, '..', <character>?
+;;;
+
+
+;;; Function: parse-charlit
+;;;
+;;;     Parses a charater literal.
+;;;
+;;;     : character = <quote>, <char>, <quote> | <number> | <hex-number>
+;;;
+;;; Parameters:
+;;;
+;;;     char-list - list of characters to parse
+;;;
+;;; Returns:
+;;;
+;;;     character-node - AST node representing the parsed character
+;;;     tail - The rest of the regex
+;;;
+(define (parse-charlit char-list)
+  'TODO)
+
+
+;;; Function: parse-string
+;;;
+;;;     Parses a string literal.
+;;;
+;;;     : string = <quote>, <char>*, <quote>
+;;;
+;;; Parameters:
+;;;
+;;;     char-list - list of characters to parse
+;;;
+;;; Returns:
+;;;
+;;;     character list - list of character AST nodes representing the
+;;;     string.
+;;;     tail - The rest of the regex
+;;;
+(define (parse-string char-list)
+  ;; reads the character list and returns the list of ast char nodes
+  ;; reads until quote or end-of-list
+  (define (parse-str-rec chlst acc)
+    (cond ((null? chlst) (values acc chlst))
+          ((equal? (car chlst) #\') acc (cdr chlst))
+          (#t
+           (let ((char-node (<make-char-node> (car chlst))))
+             (parse-str-rec (cdr chlst) (cons char-node acc)))))
+  (let-values (((char-ok tail) (parse-char #\')))
+    (if char-ok
+        (parse-str-rec tail (list))
+        (values #f #f)))))
