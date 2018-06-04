@@ -124,9 +124,38 @@
 ;;;
 ;;;     Parses a range.
 ;;;
-n;;;     : range = '..', <character> | <character>, '..', <character>?
+;;;     : range = '..', <character> | <character>, '..', <character>?
 ;;;
 
+;;; Function parse-number
+;;;
+;;;     Parses a integer number literal in hexadecimal or decimal format.
+;;;     Can be positive or negative
+;;;
+;;; Parameters:
+;;;
+;;;     char-list - list of characters to parse
+;;;
+;;; Returns:
+;;;
+;;;     number - integer, corresponding to the number literal
+;;;     tail - The rest of the regex
+;;;
+;;
+;; number: hex: [-]0x[0-9a-fA-F]+ OR [0-9][0-9a-fA-F]*[hH]
+;;         dec: [-] [0-9]+
+;;
+;; pseudocode:
+;;     read sign
+;;     if 0x then read hex
+;;     otherwise
+;;         read until end
+;;         if [hH] then convert to hex
+;;         if no [hH] then
+;;             if contains no [a-fA-F] then convert to dec
+;;             otherwise convert to dec before [a-fA-F], tail=first [a-fA-F]
+(define (parse-number chlist)
+  'TODO)
 
 ;;; Function: parse-charlit
 ;;;
@@ -144,7 +173,29 @@ n;;;     : range = '..', <character> | <character>, '..', <character>?
 ;;;     tail - The rest of the regex
 ;;;
 (define (parse-charlit char-list)
-  'TODO)
+  ;; is either a single character or two quotes
+  (define (parse-chlit-inquotes chlist)
+    (let-values (((quote1-ok quote1-tail) (parse-char chlist #\')))
+      (if quote1-ok
+          (let-values (((quote2-ok quote2-tail) (parse-char quote1-tail #\')))
+            (if quote2-ok
+                (values (make-ast-node 'character #\' #f) quote2-tail)   ; quote literal
+                (values #f #f)))                                         ; invalid char lit
+          (values (make-ast-node 'character (car char-list) #f) chlist)))) ; valid character
+  (let-values (((quote-ok quote-tail) (parse-char char-list #\')))
+    (if quote-ok
+        (let-values (((chlit-node inquote-tail) (parse-chlit-inquotes quote-tail)))
+          (if chlit-node
+              (let-values (((endquote-ok endquote-tail) (parse-char char-list #\')))
+                (if endquote-ok
+                    (values chlit-node endquote-tail)
+                    (values #f #f)))    ; no quote after literal
+              (values #f #f)))          ; no valid character literal after first quote
+        (let-values (((number number-tail) (parse-number char-list)))
+          (if number
+              (values (make-ast-node 'number number #f) number-tail)
+              (values #f #f))))))      ; not a character literal
+
 
 
 ;;; Function: parse-string
