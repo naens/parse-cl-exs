@@ -154,8 +154,75 @@
 ;;         if no [hH] then
 ;;             if contains no [a-fA-F] then convert to dec
 ;;             otherwise convert to dec before [a-fA-F], tail=first [a-fA-F]
-(define (parse-number chlist)
-  'TODO)
+(define (parse-number char-list)
+  ;; returns true if character in range '0'-'9'
+  (define (is-dec-digit c)
+    (and (char>=? c #\0) (char<=? c #\9)))
+  ;; returns true if character in range 'a'-'f' or 'A'-'F'
+  (define (is-hex-digit c)
+    (or
+     (and (char>=? c #\a) (char<=? c #\f))
+     (and (char>=? c #\A) (char<=? c #\F))))
+  ;; converts '0'-'9' to 0-9
+  (define (dec-to-num c)
+    (- (char->integer c) (char->integer #\0)))
+  ;; converts 'a'-'f','A'-'F' to 10-15
+  (define (hex-to-num c)
+    (if (and (char>=? c #\a) (char<=? c #\f))
+        (+ 10 (- (char->integer c) (char->integer #\a)))
+        (+ 10 (- (char->integer c) (char->integer #\A)))))
+  ;; creates an ast-node from digits
+  (define (read-num-tail sign char-list)
+    (let-values (((digit-values num-tail ls dec-only)
+                  (read-num char-list '() '() '())))
+      (cond ((null? digit-values)
+             (values #f #f))        ; no hex digits -> not a number
+            ((or (equal? (car num-tail) #\h) ; digits and [hH] -> hex
+                 (equal? (car num-tail) #\H))
+             (values (make-ast-node 'number (number-from-digits sign digit-values 16))))
+            ((null? ls)             ; no [hH], no a-f -> normal decimal
+             (values (make-ast-node 'number (number-from-digits sign digit-values 10)) num-tail))
+            ((null? dec-only)       ; no [hH], has a-f, but no 0-9 -> not a number
+             (values #f #f))
+            (#t                     ; no [hH], has a-f, has 0-9 -> number from [0-9]+
+             (values (make-ast-node 'number (number-from-digits sign dec-only 10)) ls)))))
+  ;; reads number, converts characters to digits
+  ;; returns
+  ;;   * the list of digits
+  ;;   * the tail
+  ;;   * the start of [a-fA-F]
+  ;;   * the list of digits from the start to first [a-fA-F]
+  (define (read-num char-list digit-values letters-start dec-only)
+    (cond ((null? char-list)
+           (values digit-values '() letters-start) dec-only)
+          ((is-dec-digit (car char-list))
+           (read-num (cdr char-list)
+                     (cons (dec-to-num (car char-list)) digit-values)
+                     letters-start
+                     (if (null? letters-start)
+                         (cons (car char-list) dec-only)
+                         dec-only)))
+          ((is-hex-digit (car char-list))
+           (read-num (cdr char-list)
+                     (cons (hex-to-num (car char-list)))
+                     (if (null? letters-start) char-list letters-start)
+                     dec-only))
+          (#t (values digit-values char-list letters-start dec-only))))
+  (let-values (((sign sign-tail) (parse-char char-list #\-)))
+    (let ((tail (if sign sign-tail char-list)))
+      (let-values (((fst fst-tail) (parse-char tail #\0)))
+        (if fst                             ; start with 0
+            (let-values (((sec sec-tail) (parse-char fst-tail #\x)))
+              (if sec                       ; start with 0x
+                  (let-values (((digit-values num-tail ls dec-only)
+                                (read-num sec-tail '() '() '())))
+                    (if (null? digit-values) ;no digits -> 0, x belongs to tail
+                        (values (make-ast-node 'number 0 sec-tail) #f)
+                        (number-from-digits sign digit-values 16))) ; 0x[0-9a-fA-f]+ number
+                  (read-num-tail sign fst-tail)))
+            (read-num-tail sign tail))))))
+
+(parse-number (string->list "0"))
 
 ;;; Function: parse-charlit
 ;;;
