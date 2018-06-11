@@ -26,7 +26,7 @@ Rules correspond to tokens, terminals and accepting states.  They are
 defined ~<name>, '=', <regex>~.
 
 Subrules are subexpressions that can be used by rules.  They are
-defined like rules, but with a ~let~ prefix: ~\'let', <name>, '=',
+defined like rules, but with a ~def~ prefix: ~\'def', <name>, '=',
 <regex>~.
 
 * Definition of the grammar of the regular expressions
@@ -41,4 +41,26 @@ character = <quote>, <char>, <quote> | <number> | <hex-number>
 string = <quote>, <char>*, <quote>
 #+END_SRC
 
+* Grammars for parsers
+Parser also use the same grammar as regular expressions with some
+differences:
+ * the rules correspond to the non-terminals, the subrules are still
+   possible and also defined with defs
+ * the rules that are not defined but used are terminals and are supposed to
+   be defined by the tokenizer
+ * some operations are not possible, the only possible operations are
+   concatenation, disjunction, Kleene star, repetition and option.
 
+These grammars can be read with the same grammar reader, but are interpreted
+differently and using different tools.
+
+* Modules
+Different modules are responsible for the different stages of the reading of
+the files and their transformation and interpretation:
+ * Grammar Reader: reads grammars for tokenizers and parsers.  Outputs
+   a list of rules.
+ * Dirivator: reads the regular expression rules and outputs a DFA.
+ * Tokenizer: reads a file using the DFA corresponding to the grammar that
+   the input file is supposed to respect, outputs a list of tokens.
+ * Parser: reads the list of tokens and outputs the AST.  It can also use
+   the parser grammar, depending on the implementation.
