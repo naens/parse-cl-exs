@@ -1,12 +1,14 @@
 // reads lexer and parser grammars
 pub mod gram_reader {
 
-    struct Rule {
+    pub struct Rule {
         // TODO: identifier
         // TODO: expression tree
     }
-    // reads a text file and outputs a list of rules
-    pub fn read (text: &str) -> Vec<rule> {
 
+    // parses a single character
+    // returns a Rule if match and the tail
+    pub fn parse_char(text: &<'a>str, tail: &<'a>mut str) -> Option<Rule>{
     }
+
 }
