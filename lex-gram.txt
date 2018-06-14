@@ -1,0 +1,37 @@
+/* separators */
+def space = <sp>+
+def lnbrk = <nl>+
+sep = <space> | <lnbrk>
+
+/* operations */
+op-repeat = <sep>*, '+', <sep>*
+op-star = '*', <sep>*
+op-option = '?', <sep>*
+op-and = <sep>*, '&', <sep>*
+op-sub = <sep>*, '\'
+op-car = <sep>*, ','
+op-range = '..'
+op-neg = <sep>*, '~'
+op-eq = <sep>*, '='
+
+/* chracters */
+def sp = 32h | 09h
+def nl = 0ah, 0dh?
+def alpha = 'a'..'z' | 'A'..'Z'
+def digit = '0'..'9'
+def hexdig = <digit> | 'a'..'f' | 'A'..'F'
+def alhpanum = <alpha> | <digit>
+def quote = ''''
+
+/* tokens */
+string = <quote>, (~<quote> & .. | <quote>, <quote>)+, <quote>
+def hex1 = '0x', <hexdig>+
+def hex2 = <digit>, <hexdigit>*, ('h' | 'H')
+def dec-num = <digit>+
+def number = <dec-num> | <hex1> | <hex2>
+def char = <string> | <number>
+range = <char>, (<op-range>, <char>?)?
+      | <op-range>, <char>?
+identifier = <alhpa>, ((<alphanum> | '-')*, <alphanum>)?
+name = '<', <identifier>, '>'
+comment = '/*', ~(..*, '*/', ..*), '*/'
