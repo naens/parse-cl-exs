@@ -29,29 +29,65 @@ Subrules are subexpressions that can be used by rules.  They are
 defined like rules, but with a ~def~ prefix: ~\'def', <name>, '=',
 <regex>~.
 
+** Separation between rules
+A rule definition begins with a rule identifier or a ~def~ keyword.
+A rule identifier begins with a letter.  A letter not in quotes
+and ~<~ ~>~ signs signifies the start of a new rule.  A rule / regex
+can contain several lines and ends at the end of input or at the start
+of a new rule.
+
 * Definition of the grammar of the regular expressions
 
 #+BEGIN_SRC
-def digit = 0..9
-def hexdigit = 0..9 | a..f | A..F
-def alpha = a..z | A..Z
-def s = ' ' | 0ah | 0ad | 09h
+** Lexer grammar/* separators */
+def space = <sp>+
+def lnbrk = <nl>+
+sep = <space> | <lnbrk>
 
-<c> = '''', '''' | .. \ ''''
-<h> = 'h' | 'H'
-<hex-number> = '0x', hexdigit+ | hexdigit+, <h>
-<number> = 0..9+
-<name> = '<', alpha, (alpha | digit)+, '>'
-<neg> = '~'
-<specifier> = '*' | '?' | '+'
+/* operators */
+op-repeat = <sep>*, '+', <sep>*
+op-star = '*', <sep>*
+op-option = '?', <sep>*
+op-and = <sep>*, '&', <sep>*
+op-sub = <sep>*, '\'
+op-car = <sep>*, ','
+op-range = '..'
+op-neg = <sep>*, '~'
+op-eq = <sep>*, '='
 
-regex = <disjunct> (<s>*'|'<s>*, <disjunct>)*
-disjunct = <term> (<s>*','<s>*, <term>)*
-term = <conjunct> (<s>*('&' | '\')<s>*, <conjunct>)*
-conjunct = <neg>, (<range>|<string>|<name>|'('<regex>')'), <specifier>?
-range = '..', <char> | <char>, '..', <char>?
-char = '''', <c>, '''' | <number> | <hex-number>
-string = '''', <c>*, ''''
+/* chracters */
+def sp = 32h | 09h
+def nl = 0ah, 0dh?
+def alpha = 'a'..'z' | 'A'..'Z'
+def digit = '0'..'9'
+def hexdig = <digit> | 'a'..'f' | 'A'..'F'
+def alhpanum = <alpha> | <digit>
+def quote = ''''
+
+/* tokens */
+string = <quote>, (~<quote> & .. | <quote>, <quote>)+, <quote>
+def hex1 = '0x', <hexdig>+
+def hex2 = <digit>, <hexdigit>*, ('h' | 'H')
+def dec-num = <digit>+
+def number = <dec-num> | <hex1> | <hex2>
+def char = <string> | <number>
+range = <char>, (<op-range>, <char>?)?
+      | <op-range>, <char>?
+identifier = <alhpa>, ((<alphanum> | '-')*, <alphanum>)?
+name = '<', <identifier>, '>'
+comment = '/*', ~(..*, '*/', ..*), '*/'
+
+#+END_SRC
+
+** Grammar Syntax
+#+BEGIN_SRC
+/* non-terminals */
+regex = <disjunct>, (<op-or>, <disjunct>)*
+disjunct = <term>, (<op-cat>, <term>)*
+term = <conjunct>, (<op-and> | <op-diff>, <conjunct>)*
+specifier = <op-star>, | <op-opt> | <op-rep>
+conjunct = <op-neg>, (<range>|<string>|<name>|'('<regex>')'), <specifier>?
+rule = <name>, <op-eq>, <regex>
 #+END_SRC
 
 * Included and excluded items in the token list
