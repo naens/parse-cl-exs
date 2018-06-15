@@ -84,9 +84,10 @@ comment = '/*', ~(..*, '*/', ..*), '*/'
 /* non-terminals */
 regex = <disjunct>, (<op-or>, <disjunct>)*
 disjunct = <term>, (<op-cat>, <term>)*
-term = <conjunct>, (<op-and> | <op-diff>, <conjunct>)*
-specifier = <op-star>, | <op-opt> | <op-rep>
-conjunct = <op-neg>, (<range>|<string>|<name>|'('<regex>')'), <specifier>?
+term = <conjunct>, ((<op-and> | <op-diff>), <conjunct>)*
+def specifier = <op-star> | <op-opt> | <op-rep>
+conjunct = <op-neg>?, <element>, <specifier>?
+def element = <range> | <string> | <ident> | <subexpr>
 rule = <name>, <op-eq>, <regex>
 #+END_SRC
 
