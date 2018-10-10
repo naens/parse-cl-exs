@@ -1,7 +1,8 @@
 /* separators */
-def space = <sp>+
-def lnbrk = <nl>+
-sep = <space> | <lnbrk>
+def space = <sp>
+def lnbrk = <nl>
+def comment = '/*', ~(..*, '*/', ..*), '*/'
+sep = (<space> | <lnbrk> | <comment>)+
 
 /* operations */
 op-repeat = <sep>*, '+', <sep>*
@@ -34,4 +35,3 @@ range = <char>, (<op-range>, <char>?)?
       | <op-range>, <char>?
 identifier = <alhpa>, ((<alphanum> | '-')*, <alphanum>)?
 name = '<', <identifier>, '>'
-comment = '/*', ~(..*, '*/', ..*), '*/'
