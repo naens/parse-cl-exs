@@ -1,1 +1,0 @@
-NDFramePage.OnPageTitleLoaded("File:ast-node.rkt","ast-node.rkt");NDSummary.OnSummaryLoaded("File:ast-node.rkt",[["Racket","racket"]],[["Structs","Struct"]],[[14,0,0,"ast-node","ast-node"]]);

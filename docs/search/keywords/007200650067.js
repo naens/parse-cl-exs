@@ -1,1 +1,0 @@
-NDSearch.OnPrefixDataLoaded("reg",["Package"],[["regex",,[[,,,,0,"File:regex.rkt:regex"]]]]);
