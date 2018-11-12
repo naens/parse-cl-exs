@@ -50,7 +50,7 @@ op-star = '*', <sep>*
 op-option = '?', <sep>*
 op-and = <sep>*, '&', <sep>*
 op-sub = <sep>*, '\'
-op-car = <sep>*, ','
+op-cat = <sep>*, ','
 op-range = '..'
 op-neg = <sep>*, '~'
 op-eq = <sep>*, '='

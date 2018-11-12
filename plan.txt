@@ -1,0 +1,9 @@
+Plan
+====
+TODO	Regex: create constructors for normalized regex
+TODO	Reader: create a reader of strings -> output normalized regex
+TODO	Other Readers: create other readers
+TODO	Regex(Classes): use character classes instead of characters
+TODO	DFA Functions: nullable, derivative, similar (and other if needed)
+TODO	Tokenizer: Rules + Text -> Tokens (iterator, list or other)
+TODO	Regex Match (Regex Reader + Text -> yes-or-no)
