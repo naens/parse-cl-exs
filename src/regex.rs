@@ -51,3 +51,21 @@ pub fn make_and() -> Operator {
 pub fn make_or() -> Operator {
     Operator::Or(BTreeSet::new())
 }
+
+// operator can is Or or And
+// check if se is the same operator then merge se's children in op
+fn sim_add(op: &mut Operator, se: SubElement) {
+    // if se is operator and same as op then merge lists
+    // otherwise insert se as child to op
+}
+
+impl Operator {
+    pub fn add(&mut self, se: SubElement) {
+        match self {
+            Operator::Concat(vec) => vec.push(se),
+            Operator::And(_) => sim_add(self, se),
+            Operator::Or(_) => sim_add(self, se),
+            _ => panic!()
+        };
+    }
+}
